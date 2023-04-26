@@ -17,6 +17,7 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
   String? id;
+  bool isChecked = false;
   TextEditingController nameController = TextEditingController();
 
   TextEditingController phoneController = TextEditingController();
@@ -133,15 +134,20 @@ class _SignupScreenState extends State<SignupScreen> {
                           decoration: BoxDecoration(
                               color: const Color(0xff6237A0),
                               borderRadius: BorderRadius.circular(30)),
-                          child: const Text("Continue to Sign up",
-                              style: TextStyle(
-                                  color: Color(0xffCFCFCF),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400),
-                              textAlign: TextAlign.center),
+                          child: !isChecked
+                              ? const Text("Continue to Sign up",
+                                  style: TextStyle(
+                                      color: Color(0xffCFCFCF),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400),
+                                  textAlign: TextAlign.center)
+                              : const CircularProgressIndicator(),
                         ),
                         onTap: () async {
                           if (_formKey.currentState!.validate()) {
+                            setState(() {
+                              isChecked = true;
+                            });
                             registration();
                           }
                         },
@@ -167,6 +173,9 @@ class _SignupScreenState extends State<SignupScreen> {
           context, MaterialPageRoute(builder: (context) => const HomeScreen()));
       prefs.setBool("islogin", true);
     } else {
+      setState(() {
+        isChecked = false;
+      });
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Something went wrong try again ")));

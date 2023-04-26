@@ -17,6 +17,7 @@ class SigninScreen extends StatefulWidget {
 class _SigninScreenState extends State<SigninScreen> {
   final _formKey = GlobalKey<FormState>();
   String? _deviceId;
+  bool ischecked = false;
   final _mobileDeviceIdentifierPlugin = MobileDeviceIdentifier();
   TextEditingController nameController = TextEditingController();
 
@@ -115,19 +116,24 @@ class _SigninScreenState extends State<SigninScreen> {
                           alignment: Alignment.center,
                           padding: const EdgeInsets.all(10),
                           width: MediaQuery.of(context).size.width * 0.85,
-                          height: MediaQuery.of(context).size.height * 0.05,
+                          height: MediaQuery.of(context).size.height * 0.06,
                           decoration: BoxDecoration(
                               color: const Color(0xff6237A0),
                               borderRadius: BorderRadius.circular(30)),
-                          child: const Text("Continue to Sign In",
-                              style: TextStyle(
-                                  color: Color(0xffCFCFCF),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400),
-                              textAlign: TextAlign.center),
+                          child: !ischecked
+                              ? const Text("Continue to Sign In",
+                                  style: TextStyle(
+                                      color: Color(0xffCFCFCF),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400),
+                                  textAlign: TextAlign.center)
+                              : const CircularProgressIndicator(),
                         ),
                         onTap: () async {
                           if (_formKey.currentState!.validate()) {
+                            setState(() {
+                              ischecked = true;
+                            });
                             login();
                           }
 
@@ -160,6 +166,9 @@ class _SigninScreenState extends State<SigninScreen> {
           context, MaterialPageRoute(builder: (context) => const HomeScreen()));
       prefs.setBool("islogin", true);
     } else {
+      setState(() {
+        ischecked = false;
+      });
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Something went wrong try again ")));
